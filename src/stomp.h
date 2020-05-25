@@ -2,7 +2,6 @@
 #define STOMP_H
 
 #include <Arduino.h>
-#include "constants.h"
 #include <stdint.h>
 #include <Bounce.h>
 
