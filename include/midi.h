@@ -6,23 +6,27 @@
 
 enum MidiMessageType
 {
-    NOTE_ON,
-    NOTE_OFF
+    NOTE_ON = 8,
+    NOTE_OFF = 9,
+    CONTROL_CHANGE = 11,
+    PROGRAM_CHANGE = 12
 };
 
 class MidiMessage
 { 
     public: 
-        MidiMessage(uint8_t p, uint8_t v, uint8_t c, MidiMessageType t);
-        MidiMessage(uint8_t p, MidiMessageType t);
-        MidiMessage(uint8_t p);
+        MidiMessage(MidiMessageType t, uint8_t ch, uint8_t data_1, uint8_t data_2, uint8_t cl);
+        MidiMessage::MidiMessage(MidiMessageType t, uint8_t ch, uint8_t data_1, uint8_t data_2);
+        MidiMessage::MidiMessage(MidiMessageType t, uint8_t ch, uint8_t data_1);
         void sendMessage();
 
     private:
-        uint8_t pitch;
-        uint8_t velocity;
-        uint8_t channel;
         MidiMessageType type;
+        uint8_t channel;
+        uint8_t data_byte_1;
+        uint8_t data_byte_2;
+        uint8_t cycle_len;
+        uint8_t curr_cycle_index;
 };
 
 #endif

@@ -1,3 +1,7 @@
+.pio/**
+.vscode/**
+config_app/env/**
+
 # Prerequisites
 *.d
 
