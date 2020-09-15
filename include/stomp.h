@@ -6,13 +6,13 @@
 #include <stdint.h>
 #include <Bounce.h>
 
-#define PRESS_STATE 1
-#define RELEASE_STATE 0
+#define PRESS_STATE 0
+#define RELEASE_STATE 1
 
 typedef struct StompConfig { 
     uint8_t state;
     uint8_t stomp_id;
-    uint8_t cycle_id;
+    uint8_t cycle_on;
     uint8_t cycle_len;
 
     MidiMessageType midi_type;

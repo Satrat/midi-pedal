@@ -16,8 +16,8 @@ class MidiMessage
 { 
     public: 
         MidiMessage(MidiMessageType t, uint8_t ch, uint8_t data_1, uint8_t data_2, uint8_t cl);
-        MidiMessage::MidiMessage(MidiMessageType t, uint8_t ch, uint8_t data_1, uint8_t data_2);
-        MidiMessage::MidiMessage(MidiMessageType t, uint8_t ch, uint8_t data_1);
+        MidiMessage(MidiMessageType t, uint8_t ch, uint8_t data_1, uint8_t data_2);
+        MidiMessage(MidiMessageType t, uint8_t ch, uint8_t data_1);
         void sendMessage();
 
     private:

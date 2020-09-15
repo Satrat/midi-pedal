@@ -18,7 +18,7 @@ void onPacketReceived(const uint8_t* buffer, size_t size)
     uint8_t stomp_id = (config_byte & 0x70) >> 4;
     if(stomp_id >= NUM_STOMPS) return;
 
-    uint8_t cycle_id = (config_byte & 0x08) >> 3;
+    uint8_t cycle_on = (config_byte & 0x08) >> 3;
     uint8_t cycle_len = (config_byte & 0x07);
 
     MidiMessageType midi_type = (MidiMessageType)((buffer[1] & 0xF0) >> 4);
@@ -26,7 +26,7 @@ void onPacketReceived(const uint8_t* buffer, size_t size)
     uint8_t data_1 = buffer[2];
     uint8_t data_2 = buffer[3];
 
-    StompConfig config = {state, stomp_id, cycle_id, cycle_len, midi_type, channel, data_1, data_2};
+    StompConfig config = {state, stomp_id, cycle_on, cycle_len, midi_type, channel, data_1, data_2};
     stomps[stomp_id]->processStompConfig(config);
 }
 

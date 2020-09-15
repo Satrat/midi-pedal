@@ -1,5 +1,6 @@
 import sys
 import serial
+import serial.tools.list_ports
 from dataclasses import dataclass
 from cobs import cobs
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, QGridLayout, QCheckBox
@@ -16,7 +17,7 @@ class MidiMessage:
 class StompConfigData:
     state: int
     stomp_id: int
-    cycle_dir: int
+    cycle_on: int
     cycle_len: int
     midi_msg_press: MidiMessage
     midi_msg_release: MidiMessage = None
@@ -159,7 +160,7 @@ class StompConfigOptions(QWidget):
     def get_current_config_data(self):
         state = int(self.trigger_release.isChecked())
         stomp_id = self.stomp_id
-        cycle_dir = int(self.cycle_press.isChecked())
+        cycle_on = int(self.cycle_press.isChecked())
         cycle_len = int(self.cycle_length.currentText())
         midi_msg_press = self.press_midi_options.get_current_midi_message()
 
@@ -168,7 +169,7 @@ class StompConfigOptions(QWidget):
         else:
             midi_msg_release = None
 
-        config_msg = StompConfigData(state, stomp_id, cycle_dir, cycle_len, midi_msg_press, midi_msg_release)
+        config_msg = StompConfigData(state, stomp_id, cycle_on, cycle_len, midi_msg_press, midi_msg_release)
         return config_msg
 
 class PedalConfigOptions(QWidget):
@@ -203,9 +204,15 @@ class MainWindow(QMainWindow):
         self.button.setMaximumWidth(400)
         self.button.clicked.connect(self.onButtonClicked) 
 
+        self.serial_port_options = QComboBox()
+        self.serial_ports = serial.tools.list_ports.comports()
+        for port, _, _ in sorted(self.serial_ports):
+            self.serial_port_options.addItem(port)
+
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.pedal_config)
+        layout.addWidget(self.serial_port_options, alignment=Qt.AlignCenter)
         layout.addWidget(self.button, alignment=Qt.AlignCenter)
         self.config_window.setLayout(layout)
 
@@ -213,32 +220,26 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.config_window)
 
-    def encodeMessage(self):
-        #psssdrrr MC D1 D2
-        p = 1
-        s = 3
-        d = 0
-        r = 5
-        M = 12
-        C = 2
-        P = 50
-        V = 0
+    def encodeStompConfig(self, config):
+        state = config.state
+        stomp_id = config.stomp_id
+        cycle_on = config.cycle_on
+        cycle_len = config.cycle_len
+        press_msg = config.midi_msg_press
+        release_msg = config.midi_msg_release
 
-        b1 = (p << 7) | (s << 4) | (d << 3) | r
-        b2 = (M << 4) | C
-        b3 = P
-        b4 = V
-        msg = [b1,b2,b3,b4]
+        byte_1_press = (0 << 7) | (stomp_id << 4) | (cycle_on << 3) | (cycle_len)
+        byte_2_press = (press_msg.midi_type << 4) | press_msg.channel
+        press_bytes = [byte_1_press, byte_2_press, press_msg.data_1, press_msg.data_2]
 
-        print(msg)
-        print([hex(m) for m in msg])
-        print([bin(m) for m in msg])
-        byte_msg = bytearray()
-        byte_msg.append(b1)
-        byte_msg.append(b2)
-        byte_msg.append(b3)
-        byte_msg.append(b4)
-        return bytearray(byte_msg)
+        if state and release_msg is not None:
+            byte_1_release = (1 << 7) | (byte_1_press)
+            byte_2_release = (release_msg.midi_type << 4) | release_msg.channel
+            release_bytes = [byte_1_release, byte_2_release, release_msg.data_1, release_msg.data_2]
+        else:
+            release_bytes = []
+
+        return bytearray(press_bytes), bytearray(release_bytes)
 
     def sendCobsMessage(self, msg):
         cobs_msg = cobs.encode(msg)
@@ -259,18 +260,21 @@ class MainWindow(QMainWindow):
         self.serial.parity = serial.PARITY_NONE #set parity check: no parity
         self.serial.stopbits = serial.STOPBITS_ONE #number of stop bit
         self.serial.timeout = timeout
+
+        print(f"Opening connection with {port}")
         self.serial.open()
 
     def serialClose(self):
         self.serial.close()
 
     def onButtonClicked(self):
-        #self.serialOpen()
-        #msg = self.encodeMessage()
-        #self.sendCobsMessage(msg)
-        #self.serialClose()
+        self.serialOpen(port = self.serial_port_options.currentText())
         for stomp in self.pedal_config.stomps:
-            print(stomp.get_current_config_data())
+            config = stomp.get_current_config_data()
+            press,release = self.encodeStompConfig(config)
+            self.sendCobsMessage(press)
+            self.sendCobsMessage(release)
+        self.serialClose()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
