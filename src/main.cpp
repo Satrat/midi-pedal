@@ -35,7 +35,7 @@ void setup()
     stomps[0] = new Stomp(stompPins[0], indicatorPins[0], new MidiMessage(NOTE_ON, 1, 60, 100));
     stomps[1] = new Stomp(stompPins[1], indicatorPins[1], new MidiMessage(NOTE_ON, 1, 62, 100));
     stomps[2] = new Stomp(stompPins[2], indicatorPins[2], new MidiMessage(NOTE_ON, 1, 64, 100));
-    stomps[3] = new Stomp(stompPins[3], indicatorPins[3], new MidiMessage(NOTE_ON, 1, 65, 100), new MidiMessage(NOTE_OFF, 1, 65));
+    stomps[3] = new Stomp(stompPins[3], indicatorPins[3], new MidiMessage(NOTE_ON, 1, 65, 100));
 
     pSerial.setPacketHandler(&onPacketReceived);
     pSerial.begin(9600);
