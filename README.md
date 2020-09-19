@@ -1,5 +1,5 @@
 # Configurable USB MIDI Foot Pedal
-This USB MIDI Stompbox is simple to build, and comes with a Python GUI for configuring each switch to output custom MIDI messages
+This USB MIDI Stompbox is simple to build, and comes with a Python GUI for configuring the MIDI output of each switch. Its perfect for controlling guitar effects in your favorite DAW, or custom patches in Max/PureData
 
 ## Setup Instructions
 
