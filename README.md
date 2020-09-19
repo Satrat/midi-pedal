@@ -1,4 +1,5 @@
 # Configurable USB MIDI Foot Pedal
+This USB MIDI Stompbox is simple to build, and comes with a Python GUI for configuring each switch to output custom MIDI messages
 
 ## Setup Instructions
 
@@ -36,11 +37,13 @@ All parameters are configurable
 
 ### Modes
 Press: emit a MIDI message when stomp box is pressed
+
 Press & Release: emit a MIDI message when a stomp box is pressed, and an independent message when it is release
+
 Cycle: Loop through a cycle of messages on repeated presses, with a max cycle length of 7
 
 ## To-Do List
 - Add electrical diagram to README
-- Save configurations on the controller between power cycles
+- Save configurations between power cycles
 - Allow saving/loading of configuration setups within the app
 - Set up pyinstaller for configuration app
