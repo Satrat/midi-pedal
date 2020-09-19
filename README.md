@@ -31,16 +31,19 @@ python config_app/pedal_config.py
 ## MIDI Configuration Notes
 
 ### Supported message types
-Note On, Note Off, Program Change, or Control Change
+- Note On
+- Note Off
+- Program Change 
+- Control Change
 
 All parameters are configurable
 
 ### Modes
-Press: emit a MIDI message when stomp box is pressed
+**Press:** emit a MIDI message when stomp box is pressed
 
-Press & Release: emit a MIDI message when a stomp box is pressed, and an independent message when it is release
+**Press & Release:** emit a MIDI message when a stomp box is pressed, and an independent message when it is release
 
-Cycle: Loop through a cycle of messages on repeated presses, with a max cycle length of 7
+**Cycle:** Loop through a cycle of messages on repeated presses, with a max cycle length of 7
 
 ## To-Do List
 - Add electrical diagram to README
