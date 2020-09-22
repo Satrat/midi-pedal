@@ -41,7 +41,7 @@ All parameters are configurable
 ### Modes
 - **Press:** emit a MIDI message when stomp box is pressed
 
-- **Press & Release:** emit a MIDI message when a stomp box is pressed, and an independent message when it is release
+- **Press & Release:** emit a MIDI message when a stomp box is pressed, and an independent message when it is released
 
 - **Cycle:** Loop through a cycle of messages on repeated presses, with a max cycle length of 7
 
