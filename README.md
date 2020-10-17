@@ -3,14 +3,14 @@ This USB MIDI Stompbox is simple to build, and comes with a Python GUI for confi
 
 ## Setup Instructions
 
-### Mechanical and Electrical Setup
+### Circuit Schematic
 
-Coming soon
+![foot pedal circuit](https://github.com/Satrat/midi-pedal/blob/master/electrical/midi_foot_pedal.png)
 
 ### Firmware
-This project uses PlatformIO to load the firmware onto a Teensy microcontroller. Before uploading code to your controller, make sure the environment is set correctly for your specific Teensy version in `platform.ini`. By default it is configurated for teensy31. 
+This project uses PlatformIO to load the firmware onto a Teensy microcontroller. Before uploading code to your controller, make sure the environment is set correctly for your specific Teensy version in `platform.ini`. By default it is configurated for a Teensy 3.2. 
 
-If you are using different pins than those designated in the above section, you can adjust the pin numbers in firmware in `include/constants.h`
+If you are using different pins than those designated in the above schematic, you can adjust the pin numbers in firmware in `include/constants.h`
 
 Once the default firmware is loaded onto the Teensy, the four stomp boxes should produce note-on messages with pitches 60,62,64,65 on a press, and do nothing on release. Read on to learn how to customize the MIDI output of your pedal board!
 
