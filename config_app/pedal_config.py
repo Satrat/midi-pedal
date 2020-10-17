@@ -3,7 +3,8 @@ import serial
 import serial.tools.list_ports
 from dataclasses import dataclass
 from cobs import cobs
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, QGridLayout, QCheckBox
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QWidget, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QHBoxLayout, QComboBox, QGridLayout, QCheckBox, QMessageBox
 from PyQt5.QtCore import Qt
 
 @dataclass
@@ -23,7 +24,7 @@ class StompConfigData:
     midi_msg_release: MidiMessage = None
 
 class MidiMessageConfigOptions(QWidget):
-    def __init__(self):
+    def __init__(self, default_byte_1=60, default_byte_2=100):
         super(MidiMessageConfigOptions,self).__init__() 
 
         self.midi_msg_type_label = QLabel("Message Type: ")
@@ -45,6 +46,8 @@ class MidiMessageConfigOptions(QWidget):
         for i in range(128):
             self.midi_data1.addItem(str(i))
             self.midi_data2.addItem(str(i))
+        self.midi_data1.setCurrentIndex(default_byte_1)
+        self.midi_data2.setCurrentIndex(default_byte_2)
         self.midi_msg_type.currentIndexChanged.connect(self.on_msg_type_changed)
 
         self.layout = QGridLayout()
@@ -268,13 +271,19 @@ class MainWindow(QMainWindow):
         self.serial.close()
 
     def onButtonClicked(self):
-        self.serialOpen(port = self.serial_port_options.currentText())
-        for stomp in self.pedal_config.stomps:
-            config = stomp.get_current_config_data()
-            press,release = self.encodeStompConfig(config)
-            self.sendCobsMessage(press)
-            self.sendCobsMessage(release)
-        self.serialClose()
+        try:
+            self.serialOpen(port = self.serial_port_options.currentText())
+            for stomp in self.pedal_config.stomps:
+                config = stomp.get_current_config_data()
+                press,release = self.encodeStompConfig(config)
+                self.sendCobsMessage(press)
+                self.sendCobsMessage(release)
+            self.serialClose()
+        except:
+            QMessageBox.about(self, "Failure", "Configuration upload failed.")
+            return
+
+        QMessageBox.about(self, "Success", "Configuration upload complete.")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
